@@ -37,7 +37,7 @@ import com.esotericsoftware.kryonet.Listener;
             	client.start();
             	
             	try {
-					client.connect(5000, "127.0.0.1", 54555, 54777);
+					client.connect(5000, "192.168.1.77", 54555, 54777);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, "Cannot connect to server");
 					return;

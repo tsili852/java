@@ -1,5 +1,18 @@
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.swing.ImageIcon;
 
 import packets.Packet;
 import packets.Packet1Connect;
@@ -7,7 +20,6 @@ import packets.Packet2Line;
 import packets.Packet3ClientDisconnect;
 import packets.Packet4Chat;
 
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -15,16 +27,36 @@ import com.esotericsoftware.kryonet.Server;
 public class main {
 
 	private static HashMap<String, Connection> clients = new HashMap<String, Connection>();
+	private static InetAddress ip; 
 	
 	public static void main(String[] args) {
 		final Server server = new Server();
+		try {
+			ip = Inet4Address.getLocalHost();
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		
+		SystemTray tray = SystemTray.getSystemTray();
+		ImageIcon icon = new ImageIcon("libs/chat-icon.png");
+		Image image = icon.getImage();
+		TrayIcon trayIcon = new TrayIcon(image, "Chat Server");
+		trayIcon.setImageAutoSize(true);
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e1) {
+			e1.printStackTrace();
+		}
+		trayIcon.displayMessage("Server IP address", ip.getHostAddress(), MessageType.INFO);
+		
+		System.out.println("Ip : " + ip.getHostAddress());
 		server.start();
 		try {
 			server.bind(54555, 54777);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+				
 		server.getKryo().register(Packet.class);
 		server.getKryo().register(Packet1Connect.class);
 		server.getKryo().register(Packet2Line.class);
@@ -49,6 +81,24 @@ public class main {
             			server.sendToAllTCP(p4);
             		}
         		}
+	        }
+	        
+	        @SuppressWarnings("unchecked")
+			public void disconnected (Connection connection) {
+	        	Packet3ClientDisconnect p3 = new Packet3ClientDisconnect();
+	        	Iterator<Entry<String, Connection>> it = clients.entrySet().iterator();
+	        	String userName = " ";
+	        	while (it.hasNext()) {
+	        		//Map.Entry<String, Connection> pairs = (Map.Entry<String, Connection>)it.next();
+	        		Map.Entry<String, Connection> pairs = it.next();
+	        		if (pairs.getValue().equals(connection)) {
+	        			userName = (String) pairs.getKey();
+	        		}
+	        	}
+	        	if (!userName.equalsIgnoreCase("")) {
+	        		p3.clientName = userName;
+	        		server.sendToAllExceptTCP(connection.getID(), p3);
+	        	}
 	        }
 	     });
 	}
