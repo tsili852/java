@@ -1,4 +1,4 @@
-    import java.awt.Dimension;
+import java.awt.Dimension;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +20,7 @@ import packets.Packet4Chat;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import javax.swing.JTextPane;
      
      
     public class Main implements ActionListener {
@@ -30,6 +31,7 @@ import com.esotericsoftware.kryonet.Listener;
             private static final JButton sendButton = new JButton("Send");
             private final Client client;
             private String userName;
+            private JTextField textField_1;
            
             public Main() {
             	
@@ -37,7 +39,7 @@ import com.esotericsoftware.kryonet.Listener;
             	client.start();
             	
             	try {
-					client.connect(5000, "192.168.1.77", 54555, 54777);
+					client.connect(5000, "10.24.29.13", 54555, 54777);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, "Cannot connect to server");
 					return;
@@ -72,29 +74,34 @@ import com.esotericsoftware.kryonet.Listener;
             	p1.usernname = userName;
             	client.sendTCP(p1);
             	            	
-                frame.setSize(512, 352);
+                frame.setSize(512, 385);
                 frame.setLocationRelativeTo(null);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setTitle(p1.usernname + " Connected !!");
                
                 Panel p = new Panel();
-                sendButton.setBounds(257, 285, 65, 23);
                 textArea.setWrapStyleWord(true);
-                textArea.setLineWrap(true);         
+                textArea.setLineWrap(true);
+                sendButton.setBounds(398, 329, 65, 23);
                 sendButton.addActionListener(this);
                 p.setLayout(null);
                 textArea.setEditable(false);
                 JScrollPane areaScrollPane = new JScrollPane(textArea);
-                areaScrollPane.setBounds(33, 5, 430, 275);
+                areaScrollPane.setBounds(33, 73, 430, 246);
                 areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
                 areaScrollPane.setPreferredSize(new Dimension(430, 275));
                
                 p.add(areaScrollPane);
-                textField.setBounds(33, 286, 206, 20);
+                textField.setBounds(33, 330, 355, 20);
                 p.add(textField);
                 p.add(sendButton);
                
                 frame.getContentPane().add(p);
+                
+                textField_1 = new JTextField();
+                textField_1.setBounds(33, 11, 127, 20);
+                p.add(textField_1);
+                textField_1.setColumns(10);
                 frame.setVisible(true);
             }
            
@@ -113,6 +120,5 @@ import com.esotericsoftware.kryonet.Listener;
                 }
                 textField.setText("");
             }
-     
     }
 
