@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import packets.Packet;
 import packets.Packet1Connect;
@@ -70,11 +71,13 @@ public class main {
             			Packet1Connect p1 = (Packet1Connect) object;
             			clients.put(p1.username, connection);
             			Packet2Line p2 = new Packet2Line();
+
             			p2.line = p1.username;
-            			server.sendToAllExceptTCP(connection.getID(), p2);
+            			p2.numberOfUsers = clients.size();
+            			server.sendToAllTCP(p2);
             		} else if (object instanceof Packet3ClientDisconnect){
             			Packet3ClientDisconnect p3 = (Packet3ClientDisconnect) object;
-            			clients.remove(p3.clientName);
+            			//clients.remove(p3.clientName);
             			server.sendToAllExceptTCP(clients.get(p3.clientName).getID(), p3);
             		} else if (object instanceof Packet4Chat){
             			Packet4Chat p4 = (Packet4Chat) object;
@@ -97,6 +100,7 @@ public class main {
 	        	}
 	        	if (!userName.equalsIgnoreCase("")) {
 	        		p3.clientName = userName;
+        			clients.remove(p3.clientName);
 	        		server.sendToAllExceptTCP(connection.getID(), p3);
 	        	}
 	        }

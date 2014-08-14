@@ -71,13 +71,13 @@ import javax.swing.JTextPane;
             	userName = JOptionPane.showInputDialog("Please give us a user name :");
 
             	Packet1Connect p1 = new Packet1Connect();
-            	p1.usernname = userName;
+            	p1.username = userName;
             	client.sendTCP(p1);
             	            	
                 frame.setSize(512, 385);
                 frame.setLocationRelativeTo(null);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setTitle(p1.usernname + " Connected !!");
+                frame.setTitle(p1.username + " Connected !!");
                
                 Panel p = new Panel();
                 textArea.setWrapStyleWord(true);
@@ -109,7 +109,7 @@ import javax.swing.JTextPane;
                     new Main();
             }
      
-            @Override
+            
             public void actionPerformed(ActionEvent arg0) {
                 String message = textField.getText();
                 if (!(message.trim().length() == 0)){
